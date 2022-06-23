@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/community")
 public class CommunityApi {
 
     private final CommunityService communityService;

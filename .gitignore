@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+src/main/resources/application.properties
+src/main/resources/sw-hackathon-aa3e2-firebase-adminsdk-kvw32-8fe0fdb989.json

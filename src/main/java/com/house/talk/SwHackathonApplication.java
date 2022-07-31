@@ -1,12 +1,13 @@
 package com.house.talk;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 import javax.annotation.PostConstruct;
 import java.util.TimeZone;
 
+@EnableFeignClients
 @SpringBootApplication
 public class SwHackathonApplication {
 

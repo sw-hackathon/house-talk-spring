@@ -33,7 +33,7 @@ public class FcmMessage {
         private String image;
     }
 
-    public String toString() {
+    public String asString() {
         String fcmMessageAsString;
 
         try {

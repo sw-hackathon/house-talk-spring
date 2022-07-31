@@ -1,11 +1,13 @@
 package com.house.talk.domain.alarm.dto;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class FcmMessageRequest {
     private String token;
     private String title;
@@ -26,6 +28,6 @@ public class FcmMessageRequest {
                 .validate_only(false)
                 .build();
 
-        return fcmMessage.toString();
+        return fcmMessage.asString();
     }
 }

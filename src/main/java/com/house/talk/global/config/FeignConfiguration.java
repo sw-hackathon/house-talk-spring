@@ -6,5 +6,4 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableFeignClients(basePackages = "com.house.talk.domain")
 public class FeignConfiguration {
-    // todo FcmClient requestFcmMessage method with bearer AUTHORIZATION
 }

@@ -3,11 +3,13 @@ package com.house.talk.domain.alarm.application;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.house.talk.domain.alarm.client.FcmClient;
 import com.house.talk.domain.alarm.dao.FcmTokenRepository;
+import com.house.talk.domain.alarm.domain.FcmToken;
 import com.house.talk.domain.alarm.dto.FcmMessageRequest;
 import com.house.talk.domain.alarm.dto.FcmTokenRegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,19 +22,18 @@ public class FcmService {
     @Value("${fcm.service.key}")
     private String FCM_KEY;
 
-    @Value("${fcm.service.url}")
-    private String FCM_URL;
-
     @Value("${fcm.service.scope}")
     private String FCM_SCOPE;
 
     private final FcmTokenRepository fcmTokenRepository;
     private final FcmClient fcmClient;
 
-    public void sendMessage(FcmMessageRequest fcmMessageRequest) {
+    @Transactional
+    public void sendMessage(FcmMessageRequest fcmMessageRequest) throws IOException {
+        String accessToken = getAccessToken();
         String message = fcmMessageRequest.toFcmMessageAsString();
 
-        fcmClient.requestFcmMessage(message);
+        fcmClient.requestFcmMessage(accessToken, message);
     }
 
     private String getAccessToken() throws IOException {
@@ -49,7 +50,8 @@ public class FcmService {
         return googleCredentials.getAccessToken().getTokenValue();
     }
 
-    public void registerToken(FcmTokenRegisterRequest fcmTokenRegisterRequest) {
-        fcmTokenRepository.save(fcmTokenRegisterRequest.toEntity());
+    @Transactional
+    public FcmToken registerToken(FcmTokenRegisterRequest fcmTokenRegisterRequest) {
+        return fcmTokenRepository.save(fcmTokenRegisterRequest.toEntity());
     }
 }

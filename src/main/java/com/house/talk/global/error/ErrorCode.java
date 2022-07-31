@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
-    INVALID_PARAMETER(400, "Invalid Request Data");
+    INVALID_PARAMETER("Invalid Request Data"),
+    INTERNAL_SERVER_ERROR("Internal Server Error");
 
-    private final int status;
     private final String message;
 }

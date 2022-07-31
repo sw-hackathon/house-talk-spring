@@ -1,7 +1,6 @@
 package com.house.talk.domain.community.domain;
 
 
-import com.house.talk.domain.community.dto.PostRequest;
 import com.house.talk.domain.house.domain.Home;
 import com.house.talk.domain.house.domain.User;
 import lombok.AccessLevel;
@@ -62,8 +61,12 @@ public class Post {
         return getClass().hashCode();
     }
 
-    public Post(Long id) {
+    private Post(Long id) {
         this.id = id;
+    }
+
+    public static Post from(Long id) {
+        return new Post(id);
     }
 
     @Builder

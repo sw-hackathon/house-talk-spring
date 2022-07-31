@@ -23,7 +23,7 @@ public class FcmTokenRegisterRequest {
     public FcmToken toEntity() {
         return FcmToken.builder()
                 .token(token)
-                .userId(new User(userId))
+                .userId(User.from(userId))
                 .build();
     }
 }

@@ -1,12 +1,16 @@
 package com.house.talk.domain.community.api;
 
 import com.house.talk.domain.community.application.CommunityService;
-import com.house.talk.domain.community.dto.*;
+import com.house.talk.domain.community.dto.CommentRequest;
+import com.house.talk.domain.community.dto.PostDetailResponse;
+import com.house.talk.domain.community.dto.PostRequest;
+import com.house.talk.domain.community.dto.PostResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.io.IOException;
 
 @RestController
@@ -17,7 +21,7 @@ public class CommunityController {
     private final CommunityService communityService;
 
     @PostMapping
-    public ResponseEntity<Void> post(@ModelAttribute PostRequest request) throws IOException {
+    public ResponseEntity<Void> post(@Valid @ModelAttribute PostRequest request) throws IOException {
         communityService.insertPost(request);
 
         return new ResponseEntity<>(HttpStatus.CREATED);

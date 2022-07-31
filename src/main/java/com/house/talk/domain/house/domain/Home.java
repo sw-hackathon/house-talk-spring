@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
@@ -38,7 +37,14 @@ public class Home {
         return getClass().hashCode();
     }
 
-    public Home(Long id) {
+    @Builder
+    private Home(Long id) {
         this.id = id;
+    }
+
+    public static Home from(Long homeId) {
+        return Home.builder()
+                .id(homeId)
+                .build();
     }
 }

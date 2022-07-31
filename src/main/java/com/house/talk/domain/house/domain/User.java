@@ -1,6 +1,7 @@
 package com.house.talk.domain.house.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
@@ -35,7 +36,14 @@ public class User {
         return getClass().hashCode();
     }
 
-    public User(Long id) {
+    @Builder
+    private User(Long id) {
         this.id = id;
+    }
+
+    public static User from(Long userId) {
+        return User.builder()
+                .id(userId)
+                .build();
     }
 }

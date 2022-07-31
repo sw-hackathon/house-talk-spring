@@ -41,8 +41,15 @@ public class PostImage {
     }
 
     @Builder
-    public PostImage(Post post, String img) {
+    private PostImage(Post post, String img) {
         this.post = post;
         this.img = img;
+    }
+
+    public static PostImage of(Long postId, String img) {
+        return PostImage.builder()
+                .post(Post.from(postId))
+                .img(img)
+                .build();
     }
 }

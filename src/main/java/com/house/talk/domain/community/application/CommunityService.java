@@ -6,18 +6,20 @@ import com.house.talk.domain.community.dao.PostRepository;
 import com.house.talk.domain.community.domain.Post;
 import com.house.talk.domain.community.domain.PostImage;
 import com.house.talk.domain.community.dto.*;
+import com.house.talk.global.error.ErrorCode;
+import com.house.talk.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -28,79 +30,48 @@ public class CommunityService {
     private final PostCommentRepository postCommentRepository;
 
     @Value("${s3.bucket.url}")
-    private String BASE_URL;
+    private String BUCKET_URL;
 
     @Transactional
     public void insertPost(PostRequest request) throws IOException {
         Long postId = postRepository.save(request.toPostEntity()).getId();
 
-        List<String> uploadedFiles = uploadPostImg(request);
-        savePostImg(postId, uploadedFiles);
+        List<String> uploadPostImgs = uploadPostImgs(request);
+        savePostImgs(postId, uploadPostImgs);
     }
 
-    private boolean isNotEmptyFile(MultipartFile file) {
-        return file != null && !file.isEmpty();
+    private List<String> uploadPostImgs(PostRequest request) {
+        List<MultipartFile> imgs = request.getImgs();
+        Stream<MultipartFile> uploadableImgs = imgs.stream()
+                .filter(file -> !ObjectUtils.isEmpty(file));
+
+        uploadableImgs.forEach(img ->
+            upload(img, PostRequest.toEachFileName(img, imgs.indexOf(img)))
+        );
+
+        return uploadableImgs
+                .map(img -> PostRequest.toEachFileName(img, imgs.indexOf(img)))
+                .collect(Collectors.toList());
     }
 
-    private void savePostImg(Long postId, List<String> uploadedFiles) {
-        for(String file : uploadedFiles) {
-            postImageRepository.save(
-                    PostImage.builder()
-                            .post(new Post(postId))
-                            .img(BASE_URL+file)
-                    .build());
+    private void upload(MultipartFile file, String fileName) {
+        try {
+            file.transferTo(new File(fileName));
+        } catch(Exception exception) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
-    private List<String> uploadPostImg(PostRequest request) throws IOException {
-        List<String> files = new ArrayList<>();
 
-        if (isNotEmptyFile(request.getImg1())) {
-            String fileName = getFileName(request.getImg1(), "1");
-
-            upload(request.getImg1(), fileName);
-            files.add(fileName);
-        }
-        if (isNotEmptyFile(request.getImg2())) {
-            String fileName = getFileName(request.getImg2(), "2");
-
-            upload(request.getImg2(), fileName);
-            files.add(fileName);
-        }
-        if (isNotEmptyFile(request.getImg3())) {
-            String fileName = getFileName(request.getImg3(), "3");
-
-            upload(request.getImg3(), fileName);
-            files.add(fileName);
-        }
-        if (isNotEmptyFile(request.getImg4())) {
-            String fileName = getFileName(request.getImg4(), "4");
-
-            upload(request.getImg4(), fileName);
-            files.add(fileName);
-        }
-        if (isNotEmptyFile(request.getImg5())) {
-            String fileName = getFileName(request.getImg5(), "5");
-
-            upload(request.getImg5(), fileName);
-            files.add(fileName);
-        }
-
-        return files;
-    }
-
-    private String getFileName(MultipartFile file, String num) {
-        return new Timestamp(System.currentTimeMillis()).getTime() + num + "." + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
-    }
-
-    private void upload(MultipartFile file, String fileName) throws IOException {
-        File newFile = new File(fileName);
-
-        file.transferTo(newFile);
+    private void savePostImgs(Long postId, List<String> uploadedImgs) {
+        uploadedImgs.forEach(img ->
+                postImageRepository.save(PostImage.of(postId, BUCKET_URL+img))
+        );
     }
 
     @Transactional(readOnly = true)
     public PostResponse getPostsByHomeId(Long homeId) {
+        // todo findbyhomeid else throw
         return PostResponse.builder()
                 .items(
                         postRepository.findByHome_id(homeId).stream()
@@ -112,7 +83,7 @@ public class CommunityService {
 
     @Transactional(readOnly = true)
     public PostDetailResponse getPostByPostId(Long postId) {
-        return PostDetailResponse.of(postRepository.findById(postId).orElse(new Post(postId)));
+        return PostDetailResponse.of(postRepository.findById(postId).orElse(Post.from(postId)));
     }
 
     @Transactional

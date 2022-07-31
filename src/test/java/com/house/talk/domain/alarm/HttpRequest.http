@@ -13,6 +13,6 @@ POST http://localhost:8080/api/token
 Content-Type: application/json
 
 {
-  "userId": "1",
+  "userId": 1,
   "token": "IIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDORa7Ptk2Wyu6r"
 }

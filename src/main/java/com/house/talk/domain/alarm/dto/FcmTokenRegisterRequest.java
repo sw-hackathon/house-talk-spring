@@ -7,11 +7,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class FcmTokenRegisterRequest {
+    @NotNull(message = "사용자를 입력해주세요")
     private Long userId;
+
+    @NotEmpty(message = "토큰을 입력해주세요")
     private String token;
 
     public FcmToken toEntity() {

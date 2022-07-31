@@ -10,23 +10,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
-public class FcmApi {
+public class FcmController {
 
     private final FcmService fcmService;
 
     @PostMapping("/alarm")
-    public ResponseEntity<?> sendFcmMessage(@RequestBody FcmMessageRequest request) throws IOException {
+    public ResponseEntity<Void> sendFcmMessage(@Valid @RequestBody FcmMessageRequest request) throws IOException {
         fcmService.sendMessage(request);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/token")
-    public ResponseEntity<?> registerFcmToken(@RequestBody FcmTokenRegisterRequest request) {
+    public ResponseEntity<Void> registerFcmToken(@Valid @RequestBody FcmTokenRegisterRequest request) {
         fcmService.registerToken(request);
 
         return new ResponseEntity<>(HttpStatus.CREATED);

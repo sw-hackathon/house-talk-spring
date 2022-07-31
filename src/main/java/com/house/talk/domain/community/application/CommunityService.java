@@ -7,6 +7,7 @@ import com.house.talk.domain.community.domain.Post;
 import com.house.talk.domain.community.domain.PostImage;
 import com.house.talk.domain.community.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +27,8 @@ public class CommunityService {
     private final PostImageRepository postImageRepository;
     private final PostCommentRepository postCommentRepository;
 
-    private static final String BASE_URL = "https://sw-hackathon.s3.ap-northeast-2.amazonaws.com/origin/";
+    @Value("${s3.bucket.url}")
+    private String BASE_URL;
 
     @Transactional
     public void insertPost(PostRequest request) throws IOException {

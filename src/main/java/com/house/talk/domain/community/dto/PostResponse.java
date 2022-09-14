@@ -10,4 +10,10 @@ import java.util.List;
 @Builder
 public class PostResponse {
     private List<PostByHomeResponse> items;
+
+    public static PostResponse from(List<PostByHomeResponse> postByHomeResponses) {
+        return PostResponse.builder()
+                .items(postByHomeResponses)
+                .build();
+    }
 }

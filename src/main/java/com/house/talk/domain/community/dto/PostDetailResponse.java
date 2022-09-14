@@ -6,7 +6,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Getter
@@ -29,17 +28,19 @@ public class PostDetailResponse {
         private LocalDateTime createdAt;
     }
 
-    public static PostDetailResponse of(Post post) {
+    public static PostDetailResponse from(Post post) {
         return PostDetailResponse.builder()
                 .postId(post.getId())
                 .content(post.getContent())
                 .imgs(
-                        post.getImages().stream()
+                        post.getImages()
+                                .stream()
                                 .map(PostImage::getImg)
                                 .collect(Collectors.toList())
                 )
                 .comments(
-                        post.getComments().stream()
+                        post.getComments()
+                                .stream()
                                 .map(postComment -> Comment.builder()
                                         .id(postComment.getId())
                                         .content(postComment.getContent())
